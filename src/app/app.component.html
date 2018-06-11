@@ -1,0 +1,70 @@
+<div class="container" [class.light-blue-theme]="!theme.isDarkTheme" [class.dark-theme]="theme.isDarkTheme">
+  <mat-toolbar color="primary">
+    <button class="menu-toggle" mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <span>{{title}}</span>
+
+    <span fxFlex></span>
+      
+    <button mat-icon-button matTooltip="More" [matMenuTriggerFor]="menu" *ngIf="auth.user | async">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [disabled]="!network.isOnline">
+        <mat-icon>create_new_folder</mat-icon>
+        <span>New</span>
+      </button>      
+      <button mat-menu-item routerLink="login">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Logout</span>
+      </button>
+      <button mat-menu-item>
+        <mat-slide-toggle 
+          [checked]="theme.isDarkTheme"
+          color="primary"
+          (change)="theme.changeTheme()">
+          Night Mode
+        </mat-slide-toggle>
+      </button>      
+    </mat-menu>  
+  </mat-toolbar>
+
+  <mat-sidenav-container hasBackdrop="false">
+    <mat-sidenav #sidenav mode="over" opened="false" class="sidenav">
+      <mat-nav-list class="nav-list">
+        <mat-list-item>
+          <mat-icon matListIcon>exit_to_app</mat-icon>
+          <a [style.outline]="'none'" matLine (click)="sidenav.close()" routerLink="login">Logout</a>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListIcon>create_new_folder</mat-icon>
+          <a [style.outline]="'none'" matLine>New</a>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <mat-slide-toggle
+            #themeToggle
+            labelPosition="before"
+            [checked]="theme.isDarkTheme"
+            color="primary"
+            (change)="theme.changeTheme()">
+            Night Mode
+          </mat-slide-toggle>
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content class="content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+  <button *ngIf="auth.user | async" mat-fab class="add-fab" color="primary" matTooltip="add new">
+    <mat-icon aria-label="add">add</mat-icon>
+  </button>     
+
+  <div *ngIf="!network.isOnline" [@fadeInOut] class="offline-notification">
+    Offline; Please check your connection.
+  </div>  
+</div>
